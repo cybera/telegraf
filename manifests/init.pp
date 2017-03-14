@@ -99,6 +99,7 @@ class telegraf (
   $outputs                = $telegraf::params::outputs,
   $global_tags            = $telegraf::params::global_tags,
   $manage_service         = $telegraf::params::manage_service,
+  $service_disable        = $telegraf::params::service_disable,
   $manage_repo            = $telegraf::params::manage_repo,
   $purge_config_fragments = $telegraf::params::purge_config_fragments,
   $repo_type              = $telegraf::params::repo_type,
@@ -129,6 +130,7 @@ class telegraf (
   validate_hash($outputs)
   validate_hash($global_tags)
   validate_bool($manage_service)
+  validate_bool($service_disable)
   validate_bool($manage_repo)
   validate_bool($purge_config_fragments)
   validate_string($repo_type)
@@ -142,11 +144,9 @@ class telegraf (
   $_outputs = hiera_hash('telegraf::outputs', $outputs)
   $_inputs = hiera_hash('telegraf::inputs', $inputs)
 
-  contain ::telegraf::install
-  contain ::telegraf::config
-  contain ::telegraf::service
+  include ::telegraf::install
+  include ::telegraf::config
+  include ::telegraf::service
 
-  Class['::telegraf::install'] ->
-  Class['::telegraf::config'] ->
-  Class['::telegraf::service']
+  anchor { 'telegraf_first': } -> Class['::telegraf::install'] -> Class['::telegraf::config'] -> Class['::telegraf::service'] -> anchor { 'telegraf_last': }
 }

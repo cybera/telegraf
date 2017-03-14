@@ -36,6 +36,7 @@ class telegraf::params {
   $quiet                  = false
   $global_tags            = {}
   $manage_service         = true
+  $service_disable        = false
   $purge_config_fragments = false
   $repo_type              = 'stable'
   $windows_package_url    = 'https://chocolatey.org/api/v2/'
